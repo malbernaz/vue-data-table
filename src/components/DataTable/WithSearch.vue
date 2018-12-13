@@ -15,21 +15,21 @@
         <Caret/>
       </label>
     </div>
-    <slot v-bind="{defs,rows:filteredRows,search,filter,onRowSelect}"/>
+    <slot v-bind="{defs,rows:filteredRows,onRowSelect,search,filter}"/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import Caret from "../icons/Caret.vue";
-import { Def, TableData } from "./types";
+import { Def, Row } from "./types";
 
 export default Vue.extend({
   components: { Caret },
   data() {
     return {
       search: "",
-      filter: this.defaultFilter || this.defs[0].field || ""
+      filter: this.defaultFilter || this.defs[0].field
     };
   },
   props: {
@@ -38,7 +38,7 @@ export default Vue.extend({
       required: true
     },
     rows: {
-      type: Array as () => TableData[],
+      type: Array as () => Row[],
       require: true
     },
     defaultFilter: {
@@ -46,11 +46,11 @@ export default Vue.extend({
     },
     onRowSelect: {
       // @ts-ignore
-      type: Function as () => (row: TableData) => void
+      type: Function as () => (row: Row) => void
     }
   },
   computed: {
-    filteredRows(): TableData[] {
+    filteredRows(): Row[] {
       return this.rows.filter(row => {
         let def = this.defs.find(def => def.field === this.filter) as Def;
         let col = this.defs.indexOf(def);

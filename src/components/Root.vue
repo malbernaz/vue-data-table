@@ -20,7 +20,7 @@
 <script lang="ts">
 import Vue from "vue";
 import tinydate from "tinydate";
-import { DataTable, WithSearch, Def, TableData } from "./DataTable";
+import { DataTable, WithSearch, Def, Row } from "./DataTable";
 import Modal from "./Modal.vue";
 
 let stamp = tinydate("{DD}/{MM}/{YYYY}");
@@ -31,7 +31,7 @@ let currFmt = new Intl.NumberFormat("en-US", {
 
 interface Data {
   defs: Def[];
-  rows: TableData[];
+  rows: Row[];
   showModal: boolean;
   selectedRow: number;
 }
@@ -39,8 +39,7 @@ interface Data {
 let defs: Def[] = [
   {
     field: "ID",
-    display: false,
-    width: "15%"
+    display: false
   },
   {
     field: "Name",
@@ -83,7 +82,7 @@ export default Vue.extend({
     this.rows = rows;
   },
   methods: {
-    handleRowSelect(row: TableData, rowIndex: number) {
+    handleRowSelect(row: Row, rowIndex: number) {
       this.selectedRow = rowIndex;
       this.showModal = true;
     },

@@ -8,7 +8,7 @@
           :key="header.field"
           :style="{width:header.width||'auto'}"
         >
-          <button @click="sort(header, i)">
+          <button @click="sort(header,i)">
             {{header.field}}
             <Caret/>
           </button>
@@ -17,10 +17,10 @@
       <tr
         v-for="(row,i) of transformedData"
         :key="'row'+i"
-        role="button"
-        tabindex="0"
         @keypress.enter="onRowSelect(row,i)"
         @click="onRowSelect(row,i)"
+        role="button"
+        tabindex="0"
       >
         <td
           v-for="(cell,j) of row"
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Def, TableData } from "./types";
+import { Def, Row } from "./types";
 import Caret from "../icons/Caret.vue";
 
 export default Vue.extend({
@@ -46,31 +46,32 @@ export default Vue.extend({
       required: true
     },
     rows: {
-      type: Array as () => TableData[],
+      type: Array as () => Row[],
       require: true
     },
     onRowSelect: {
       // @ts-ignore
-      type: Function as () => (row: TableData) => void
+      type: Function as () => (row: Row) => void,
+      default: () => {}
     }
   },
   data(): { sortedBy?: Def } {
     return {
-      sortedBy: void 0
+      sortedBy: undefined
     };
   },
   methods: {
     sort(def: Def) {
       if (this.sortedBy && this.sortedBy.field === def.field) {
         this.rows.reverse();
-        this.sortedBy = void 0;
+        this.sortedBy = undefined;
       } else {
         this.sortedBy = def;
       }
     }
   },
   computed: {
-    transformedData(): TableData[] {
+    transformedData(): Row[] {
       let def = this.sortedBy;
 
       if (def) {
@@ -104,7 +105,6 @@ table {
   width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
-  /* table-layout: fixed; */
 }
 
 button {
