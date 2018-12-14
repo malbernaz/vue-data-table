@@ -35,33 +35,20 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Def, Row } from "./types";
+import { ColumnDef, Row } from "./types";
 import Caret from "../icons/Caret.vue";
+import props from "./props";
 
 export default Vue.extend({
   components: { Caret },
-  props: {
-    defs: {
-      type: Array as () => Def[],
-      required: true
-    },
-    rows: {
-      type: Array as () => Row[],
-      require: true
-    },
-    onRowSelect: {
-      // @ts-ignore
-      type: Function as () => (row: Row, i: number) => void,
-      default: () => {}
-    }
-  },
-  data(): { sortedBy?: Def } {
+  props,
+  data(): { sortedBy?: ColumnDef } {
     return {
       sortedBy: undefined
     };
   },
   methods: {
-    sort(def: Def) {
+    sort(def: ColumnDef) {
       if (this.sortedBy && this.sortedBy.name === def.name) {
         this.rows.reverse();
         this.sortedBy = undefined;

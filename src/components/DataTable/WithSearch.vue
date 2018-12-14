@@ -22,31 +22,21 @@
 <script lang="ts">
 import Vue from "vue";
 import Caret from "../icons/Caret.vue";
-import { Def, Row } from "./types";
+import { Row, ColumnDef } from "./types";
+import props from "@/components/DataTable/props";
 
 export default Vue.extend({
   components: { Caret },
   data() {
     return {
       search: "",
-      filter: this.defaultFilter || this.defs[0].name
+      filter: this.defaultFilter || (this.defs.find(def => def.display !== false) as ColumnDef).name
     };
   },
   props: {
-    defs: {
-      type: Array as () => Def[],
-      required: true
-    },
-    rows: {
-      type: Array as () => Row[],
-      require: true
-    },
+    ...props,
     defaultFilter: {
       type: String
-    },
-    onRowSelect: {
-      // @ts-ignore
-      type: Function as () => (row: Row) => void
     }
   },
   computed: {

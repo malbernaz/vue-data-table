@@ -1,4 +1,4 @@
-export interface Def {
+export interface ColumnDef {
   name: string;
   display?: boolean;
   align?: string;

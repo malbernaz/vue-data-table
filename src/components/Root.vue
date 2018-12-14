@@ -23,7 +23,7 @@
 <script lang="ts">
 import Vue from "vue";
 import tinydate from "tinydate";
-import { DataTable, WithSearch, Def, Row } from "./DataTable";
+import { DataTable, WithSearch, ColumnDef, Row } from "./DataTable";
 import Modal from "./Modal.vue";
 import Spinner from "./Spinner.vue";
 import client from "@/api";
@@ -37,12 +37,12 @@ let currFmt = new Intl.NumberFormat("en-US", {
 });
 
 interface Data {
-  defs: Def[];
+  defs: ColumnDef[];
   showModal: boolean;
   selectedRow?: Row;
 }
 
-let defs: Def[] = [
+let defs: ColumnDef[] = [
   {
     name: "id",
     display: false

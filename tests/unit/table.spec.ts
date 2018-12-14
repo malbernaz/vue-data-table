@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { shallowMount, mount } from "@vue/test-utils";
-import { DataTable, WithSearch, Def, Row } from "@/components/DataTable";
+import { DataTable, WithSearch, ColumnDef, Row } from "@/components/DataTable";
 import fs from "fs";
 import path from "path";
 
@@ -14,7 +14,7 @@ describe("DataTable", () => {
   });
 
   it("should render given required props", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -32,7 +32,7 @@ describe("DataTable", () => {
   });
 
   it("should not render a column with display set to false", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id", display: false },
       { name: "name" },
       { name: "description" },
@@ -52,7 +52,7 @@ describe("DataTable", () => {
   });
 
   it("should align items properly if specified", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -70,7 +70,7 @@ describe("DataTable", () => {
   });
 
   it("should preserve width given a width prop for a definition", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id", width: "20%" },
       { name: "name", width: "20%" },
       { name: "description", width: "40%" },
@@ -86,7 +86,7 @@ describe("DataTable", () => {
   });
 
   it("should sort rows by name given a compare function", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -120,7 +120,7 @@ describe("DataTable", () => {
   });
 
   it("should sort rows alphabetically if a compare function is not provided", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -144,7 +144,7 @@ describe("DataTable", () => {
   });
 
   it("should transform data given a transform function", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name", transform: (name: string) => `${name}!!` },
       { name: "description" },
@@ -167,7 +167,7 @@ describe("DataTable", () => {
   });
 
   it("should execute onRowSelect in response to a row selection", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -193,7 +193,7 @@ describe("WithSearch", () => {
   });
 
   it("should provide a search text", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -211,7 +211,7 @@ describe("WithSearch", () => {
   });
 
   it("should provide a filter", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -229,7 +229,7 @@ describe("WithSearch", () => {
   });
 
   it("should provide a filter", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -247,7 +247,7 @@ describe("WithSearch", () => {
   });
 
   it("should set filter to first def name if no defaultname is Provided", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -261,7 +261,7 @@ describe("WithSearch", () => {
   });
 
   it("should set filter to defaultname", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -275,7 +275,7 @@ describe("WithSearch", () => {
   });
 
   it("should pass table props throw slot scope", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id" },
       { name: "name" },
       { name: "description" },
@@ -298,7 +298,7 @@ describe("WithSearch", () => {
   });
 
   it("should filter data", () => {
-    let defs: Def[] = [
+    let defs: ColumnDef[] = [
       { name: "id", display: false },
       { name: "name" },
       { name: "description" },
