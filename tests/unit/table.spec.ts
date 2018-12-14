@@ -1,9 +1,12 @@
 import Vue from "vue";
 import { shallowMount, mount } from "@vue/test-utils";
-import { DataTable, WithSearch, Def } from "@/components/DataTable";
-import csv from "./payment-data.json";
+import { DataTable, WithSearch, Def, Row } from "@/components/DataTable";
+import fs from "fs";
+import path from "path";
 
-let [_, ...rows] = csv;
+const csv = fs.readFileSync(path.join(__dirname, "payment-data.json"), "utf-8");
+
+let rows: Row[] = JSON.parse(csv);
 
 describe("DataTable", () => {
   it("should throw if required props are not provided", () => {
@@ -12,17 +15,17 @@ describe("DataTable", () => {
 
   it("should render given required props", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
 
     wrapper.findAll("th").wrappers.forEach((th, i) => {
-      expect(th.text()).toBe(defs[i].field);
+      expect(th.text()).toBe(defs[i].name);
     });
 
     expect(wrapper.findAll("tr").wrappers.length - 1).toBe(rows.length);
@@ -30,16 +33,16 @@ describe("DataTable", () => {
 
   it("should not render a column with display set to false", () => {
     let defs: Def[] = [
-      { field: "ID", display: false },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id", display: false },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
 
-    expect(wrapper.find("th:first-child").text()).not.toBe("ID");
+    expect(wrapper.find("th:first-child").text()).not.toBe("id");
 
     let [_, ...dataRows] = wrapper.findAll("tr").wrappers;
 
@@ -50,11 +53,11 @@ describe("DataTable", () => {
 
   it("should align items properly if specified", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount", align: "right" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount", align: "right" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
@@ -68,89 +71,85 @@ describe("DataTable", () => {
 
   it("should preserve width given a width prop for a definition", () => {
     let defs: Def[] = [
-      { field: "ID", width: "20%" },
-      { field: "Name", width: "20%" },
-      { field: "Description", width: "40%" },
-      { field: "Date", width: "20%" },
-      { field: "Amount" }
+      { name: "id", width: "20%" },
+      { name: "name", width: "20%" },
+      { name: "description", width: "40%" },
+      { name: "date", width: "20%" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
 
     wrapper.findAll("th").wrappers.forEach((col, i) => {
-      expect(col.element.style.width).toBe(defs[i].width || "auto");
+      if (defs[i].width) expect(col.element.style.width).toBe(defs[i].width);
     });
   });
 
-  it("should sort rows by field given a compare function", () => {
+  it("should sort rows by name given a compare function", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount", sort: (a: string, b: string) => parseFloat(a) - parseFloat(b) }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount", compare: (a: number, b: number) => a - b }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
 
-    let [, ...amounts] = (csv as string[][]).map((row: string[]) => row[4]);
-    let sortedAmounts = amounts
-      .slice()
-      .sort((a: string, b: string) => parseFloat(a) - parseFloat(b));
-    let reverseSortedAmounts = amounts
-      .slice()
-      .sort((a: string, b: string) => parseFloat(b) - parseFloat(a));
+    let amounts = rows.map(row => row.amount);
+    let sortedamounts = amounts.slice().sort((a: number, b: number) => a - b);
+    let reverseSortedamounts = amounts.slice().sort((a: number, b: number) => b - a);
 
-    let [, ...wrappers] = wrapper.findAll("tr").wrappers;
+    let [, ...dataRows] = wrapper.findAll("tr").wrappers;
 
     // user clicks column
     wrapper.find("th:last-child button").element.click();
 
     // renders rows in order
-    wrappers.forEach((row, i) => {
-      expect(row.find("td:last-child").text()).toBe(sortedAmounts[i]);
+    dataRows.forEach((row, i) => {
+      expect(row.find("td:last-child").text()).toBe(sortedamounts[i].toString());
     });
 
     // user clicks column for the second time
     wrapper.find("th:last-child button").element.click();
 
     // renders rows in reverse order
-    wrappers.forEach((row, i) => {
-      expect(row.find("td:last-child").text()).toBe(reverseSortedAmounts[i]);
+    dataRows.forEach((row, i) => {
+      expect(row.find("td:last-child").text()).toBe(reverseSortedamounts[i].toString());
     });
   });
 
   it("should sort rows alphabetically if a compare function is not provided", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
     let [, ...wrappers] = wrapper.findAll("tr").wrappers;
 
-    let [, ...names] = (csv as string[][]).map((row: string[]) => row[1]);
-    let sortedNames = names.slice().sort((a, b) => a.localeCompare(b));
+    let names = rows.map(row => row.name);
+    let sortednames = names.slice().sort((a, b) => a.localeCompare(b));
 
     // user clicks name column
     wrapper.find("th:nth-child(2) button").element.click();
 
     // renders rows ordered by name alphabetically
     wrappers.forEach((row, i) => {
-      expect(row.find("td:nth-child(2)").text()).toBe(sortedNames[i]);
+      expect(row.find("td:nth-child(2)").text()).toBe(sortednames[i]);
     });
   });
 
   it("should transform data given a transform function", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name", transform: (name: string) => `${name}!!` },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name", transform: (name: string) => `${name}!!` },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(DataTable, { propsData: { defs, rows } });
@@ -169,11 +168,11 @@ describe("DataTable", () => {
 
   it("should execute onRowSelect in response to a row selection", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     const onRowSelect = jest.fn();
@@ -195,11 +194,11 @@ describe("WithSearch", () => {
 
   it("should provide a search text", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(WithSearch, { propsData: { defs, rows } });
@@ -213,81 +212,81 @@ describe("WithSearch", () => {
 
   it("should provide a filter", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(WithSearch, { propsData: { defs, rows } });
 
-    wrapper.setData({ filter: "Name" });
+    wrapper.setData({ filter: "name" });
 
     setTimeout(() => {
-      expect(wrapper.find("select").text()).toBe("Name");
+      expect(wrapper.find("select").text()).toBe("name");
     });
   });
 
   it("should provide a filter", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(WithSearch, { propsData: { defs, rows } });
 
-    wrapper.setData({ filter: "Name" });
+    wrapper.setData({ filter: "name" });
 
     setTimeout(() => {
-      expect(wrapper.find("select").text()).toBe("Name");
+      expect(wrapper.find("select").text()).toBe("name");
     });
   });
 
-  it("should set filter to first def field if no defaultField is Provided", () => {
+  it("should set filter to first def name if no defaultname is Provided", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let wrapper = shallowMount(WithSearch, { propsData: { defs, rows } });
 
-    expect(wrapper.vm.$data.filter).toBe("ID");
+    expect(wrapper.vm.$data.filter).toBe("id");
   });
 
-  it("should set filter to defaultField", () => {
+  it("should set filter to defaultname", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
-    let wrapper = shallowMount(WithSearch, { propsData: { defs, rows, defaultFilter: "Name" } });
+    let wrapper = shallowMount(WithSearch, { propsData: { defs, rows, defaultFilter: "name" } });
 
-    expect(wrapper.vm.$data.filter).toBe("Name");
+    expect(wrapper.vm.$data.filter).toBe("name");
   });
 
   it("should pass table props throw slot scope", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id" },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let TableWithWrapper = Vue.extend({
       render(createElement) {
         return createElement(WithSearch, {
-          props: { defs, rows, defaultFilter: "Name" },
+          props: { defs, rows, defaultFilter: "name" },
           scopedSlots: {
             default: (props: any) => createElement(DataTable, { props })
           }
@@ -300,17 +299,17 @@ describe("WithSearch", () => {
 
   it("should filter data", () => {
     let defs: Def[] = [
-      { field: "ID" },
-      { field: "Name" },
-      { field: "Description" },
-      { field: "Date" },
-      { field: "Amount" }
+      { name: "id", display: false },
+      { name: "name" },
+      { name: "description" },
+      { name: "date" },
+      { name: "amount" }
     ];
 
     let TableWithWrapper = Vue.extend({
       render(createElement) {
         return createElement(WithSearch, {
-          props: { defs, rows, defaultFilter: "Name" },
+          props: { defs, rows, defaultFilter: "name" },
           scopedSlots: {
             default: (props: any) => createElement(DataTable, { props })
           }
@@ -321,13 +320,13 @@ describe("WithSearch", () => {
     let wrapper = mount(TableWithWrapper);
 
     let input = wrapper.find("input");
-    // user sets search text to kyra (first data row on payment-data.json)
+    // user sets search text to Aimee (first data row on payment-data.json)
     // @ts-ignore
-    input.element.value = "kyra";
+    input.element.value = "aimee";
     input.trigger("input");
 
     let [, ...dataRows] = wrapper.findAll("tr").wrappers;
 
-    expect(dataRows.length).toBe(1);
+    expect(dataRows[0].find("td:nth-child(1)").text()).toBe("Aimee Davidson");
   });
 });

@@ -1,9 +1,12 @@
 <template>
   <div>
     <div class="table-wrapper">
-      <WithSearch :defs="defs" :rows="rows" :onRowSelect="handleRowSelect" defaultFilter="Name">
+      <WithSearch :defs="defs" :rows="items" :onRowSelect="handleRowSelect" defaultFilter="name">
         <DataTable slot-scope="tableProps" v-bind="tableProps"/>
       </WithSearch>
+      <div class="spin-wrapper" v-if="loading">
+        <Spinner/>
+      </div>
     </div>
     <Modal v-if="showModal" @close="showModal=false" :title="selectedRow.name">
       <div class="modal">
@@ -22,8 +25,10 @@ import Vue from "vue";
 import tinydate from "tinydate";
 import { DataTable, WithSearch, Def, Row } from "./DataTable";
 import Modal from "./Modal.vue";
+import Spinner from "./Spinner.vue";
 import client from "@/api";
 import { LIST_PAYMENTS } from "@/queries";
+import { mapActions, mapState } from "vuex";
 
 let stamp = tinydate("{DD}/{MM}/{YYYY}");
 let currFmt = new Intl.NumberFormat("en-US", {
@@ -33,59 +38,50 @@ let currFmt = new Intl.NumberFormat("en-US", {
 
 interface Data {
   defs: Def[];
-  rows: Row[];
   showModal: boolean;
   selectedRow?: Row;
 }
 
 let defs: Def[] = [
   {
-    field: "id",
+    name: "id",
     display: false
   },
   {
-    field: "name",
+    name: "name",
     width: "20%"
   },
   {
-    field: "description",
+    name: "description",
     width: "60%"
   },
   {
-    field: "date",
+    name: "date",
     align: "right",
     width: "10%",
     transform: (data: string) => stamp(new Date(data)),
-    sort: (a: string, b: string) => +new Date(a) - +new Date(b)
+    compare: (a: string, b: string) => +new Date(a) - +new Date(b)
   },
   {
-    field: "amount",
+    name: "amount",
     align: "right",
     width: "10%",
     transform: (data: number) => currFmt.format(data),
-    sort: (a: number, b: number) => a - b
+    compare: (a: number, b: number) => a - b
   }
 ];
 
 export default Vue.extend({
-  components: { DataTable, Modal, WithSearch },
+  components: { DataTable, Modal, WithSearch, Spinner },
   data(): Data {
     return {
       defs,
-      rows: [],
       showModal: false,
       selectedRow: undefined
     };
   },
-  async created() {
-    const {
-      data: {
-        // @ts-ignore
-        listPayments: { items }
-      }
-    } = await client.execute(LIST_PAYMENTS);
-
-    this.rows = items;
+  created() {
+    this.fetchItems();
   },
   methods: {
     handleRowSelect(row: Row) {
@@ -93,8 +89,13 @@ export default Vue.extend({
       this.showModal = true;
     },
     save() {
+      this.updateItem(this.selectedRow);
       this.showModal = false;
-    }
+    },
+    ...mapActions(["fetchItems", "updateItem"])
+  },
+  computed: {
+    ...mapState(["items", "loading"])
   }
 });
 </script>
@@ -142,5 +143,13 @@ export default Vue.extend({
   text-transform: uppercase;
   display: block;
   align-self: flex-end;
+}
+
+.spin-wrapper {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

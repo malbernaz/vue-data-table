@@ -8,9 +8,9 @@
           <option
             v-for="def of defs"
             v-if="def.display!==false"
-            :key="def.field"
-            :value="def.field"
-          >{{def.field}}</option>
+            :key="def.name"
+            :value="def.name"
+          >{{def.name}}</option>
         </select>
         <Caret/>
       </label>
@@ -29,7 +29,7 @@ export default Vue.extend({
   data() {
     return {
       search: "",
-      filter: this.defaultFilter || this.defs[0].field
+      filter: this.defaultFilter || this.defs[0].name
     };
   },
   props: {
@@ -75,6 +75,7 @@ select {
   outline: 0;
   background: transparent;
   position: relative;
+  transition: border-color 0.2s ease;
 }
 
 select {

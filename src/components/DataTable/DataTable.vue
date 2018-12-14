@@ -5,11 +5,11 @@
         <th
           v-for="def of defs"
           v-if="def.display!==false"
-          :key="def.field"
-          :style="{width:def.width||'auto'}"
+          :key="def.name"
+          :style="{width:def.width}"
         >
           <button @click="sort(def)">
-            {{def.field}}
+            {{def.name}}
             <Caret/>
           </button>
         </th>
@@ -17,8 +17,8 @@
       <tr
         v-for="(row,i) of transformedData"
         :key="'row'+i"
-        @keypress.enter="onRowSelect(row,i)"
-        @click="onRowSelect(row,i)"
+        @keypress.enter="onRowSelect(rows[i])"
+        @click="onRowSelect(rows[i])"
         role="button"
         tabindex="0"
       >
@@ -26,8 +26,8 @@
           v-for="(def,j) of defs"
           v-if="def.display!==false"
           :key="j+i+'cell'"
-          :style="{textAlign:def.align||'left'}"
-        >{{row[def.field]}}</td>
+          :style="{textAlign:def.align}"
+        >{{row[def.name]}}</td>
       </tr>
     </table>
   </div>
@@ -51,7 +51,7 @@ export default Vue.extend({
     },
     onRowSelect: {
       // @ts-ignore
-      type: Function as () => (row: Row) => void,
+      type: Function as () => (row: Row, i: number) => void,
       default: () => {}
     }
   },
@@ -62,7 +62,7 @@ export default Vue.extend({
   },
   methods: {
     sort(def: Def) {
-      if (this.sortedBy && this.sortedBy.field === def.field) {
+      if (this.sortedBy && this.sortedBy.name === def.name) {
         this.rows.reverse();
         this.sortedBy = undefined;
       } else {
@@ -71,20 +71,20 @@ export default Vue.extend({
     }
   },
   computed: {
-    transformedData(): Row {
+    transformedData(): Row[] {
       if (this.sortedBy) {
-        let { field, sort } = this.sortedBy;
+        let { name, compare } = this.sortedBy;
 
         this.rows.sort((rowA, rowB) =>
-          sort ? sort(rowA[field], rowB[field]) : rowA[field].localeCompare(rowB[field])
+          compare ? compare(rowA[name], rowB[name]) : rowA[name].localeCompare(rowB[name])
         );
       }
 
       return this.rows.map(row =>
         this.defs.reduce(
-          (acc, { field, transform }) => ({
+          (acc, { name, transform }) => ({
             ...acc,
-            [field]: transform ? transform(row[field]) : row[field]
+            [name]: transform ? transform(row[name]) : row[name]
           }),
           {}
         )

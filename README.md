@@ -4,7 +4,7 @@
 
 ### How long did you spend on the test? Would you do anything differently if you had more time?
 
-I took 4 days to finish the components and write the tests. If I had more time I would add more features such as pagination.
+I took 3 days to finish the components and write the tests and a day to setup amplify and integrate. If I had more time I would add more features such as pagination and async search and add error handling.
 
 ### In what ways would you adapt your component so that it could be used in many different scenarios where a data table is required?
 

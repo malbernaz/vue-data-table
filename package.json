@@ -15,6 +15,7 @@
     "@grafoo/babel-plugin": "^1.2.1",
     "@grafoo/types": "^1.2.1",
     "@types/jest": "^23.1.4",
+    "@types/node": "^10.12.15",
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-plugin-typescript": "^3.2.0",
     "@vue/cli-plugin-unit-jest": "^3.2.0",

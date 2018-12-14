@@ -1,15 +1,20 @@
 import graphql from "@grafoo/core/tag";
+import { Row } from "./components/DataTable";
+
+export interface ListPayments {
+  listPayments: { items: Row[] };
+}
 
 export const LIST_PAYMENTS = graphql`
   query {
     listPayments {
       items {
+        id
         name
         description
         date
         amount
       }
-      nextToken
     }
   }
 `;

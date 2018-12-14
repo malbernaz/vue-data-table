@@ -20,7 +20,6 @@ async function request(query: string, variables?: Variables) {
 const client = createClient(request);
 
 if (process.env.NODE_ENV !== "production") {
-  // @ts-ignore
   window.client = client;
 }
 

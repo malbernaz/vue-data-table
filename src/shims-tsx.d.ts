@@ -1,4 +1,5 @@
 import Vue, { VNode } from "vue";
+import { GrafooClient } from "@grafoo/types";
 
 declare global {
   namespace JSX {
@@ -9,5 +10,9 @@ declare global {
     interface IntrinsicElements {
       [elem: string]: any;
     }
+  }
+
+  interface Window {
+    client: GrafooClient;
   }
 }
