@@ -3,8 +3,8 @@ export interface Def {
   display?: boolean;
   align?: string;
   width?: string;
-  sort?: (a: string, b: string) => number;
-  transform?: (data: string) => string;
+  sort?: (a: any, b: any) => number;
+  transform?: (data: any) => string;
 }
 
-export type Row = string[];
+export type Row = { [key: string]: any }[];

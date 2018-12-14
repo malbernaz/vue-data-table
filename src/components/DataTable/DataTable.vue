@@ -3,13 +3,13 @@
     <table>
       <tr>
         <th
-          v-for="(header, i) of defs"
-          v-if="header.display!==false"
-          :key="header.field"
-          :style="{width:header.width||'auto'}"
+          v-for="def of defs"
+          v-if="def.display!==false"
+          :key="def.field"
+          :style="{width:def.width||'auto'}"
         >
-          <button @click="sort(header,i)">
-            {{header.field}}
+          <button @click="sort(def)">
+            {{def.field}}
             <Caret/>
           </button>
         </th>
@@ -23,11 +23,11 @@
         tabindex="0"
       >
         <td
-          v-for="(cell,j) of row"
-          v-if="defs[j].display!==false"
-          :key="j"
-          :style="{textAlign:defs[j].align||'left'}"
-        >{{cell}}</td>
+          v-for="(def,j) of defs"
+          v-if="def.display!==false"
+          :key="j+i+'cell'"
+          :style="{textAlign:def.align||'left'}"
+        >{{row[def.field]}}</td>
       </tr>
     </table>
   </div>
@@ -71,24 +71,23 @@ export default Vue.extend({
     }
   },
   computed: {
-    transformedData(): Row[] {
-      let def = this.sortedBy;
-
-      if (def) {
-        let col = this.defs.indexOf(def);
+    transformedData(): Row {
+      if (this.sortedBy) {
+        let { field, sort } = this.sortedBy;
 
         this.rows.sort((rowA, rowB) =>
-          // @ts-ignore
-          def.sort ? def.sort(rowA[col], rowB[col]) : rowA[col].localeCompare(rowB[col])
+          sort ? sort(rowA[field], rowB[field]) : rowA[field].localeCompare(rowB[field])
         );
       }
 
       return this.rows.map(row =>
-        row.map((cell, i) => {
-          let def = this.defs[i];
-
-          return def.transform ? def.transform(cell) : cell;
-        })
+        this.defs.reduce(
+          (acc, { field, transform }) => ({
+            ...acc,
+            [field]: transform ? transform(row[field]) : row[field]
+          }),
+          {}
+        )
       );
     }
   }

@@ -1,0 +1,84 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "britecodechallenge-20181213145247-authRole",
+			"UnauthRoleArn": "arn:aws:iam::261504354854:role/britecodechallenge-20181213145247-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::261504354854:role/britecodechallenge-20181213145247-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "britecodechallenge-20181213145247-deployment",
+			"UnauthRoleName": "britecodechallenge-20181213145247-unauthRole",
+			"StackName": "britecodechallenge-20181213145247",
+			"StackId": "arn:aws:cloudformation:us-east-1:261504354854:stack/britecodechallenge-20181213145247/857366b0-fef7-11e8-bbcf-500c286014fd"
+		}
+	},
+	"storage": {
+		"bctabledata": {
+			"service": "DynamoDB",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/britecodechallenge-20181213145247-deployment/amplify-cfn-templates/storage/bctabledata-cloudformation-template.json",
+				"logicalId": "storagebctabledata"
+			},
+			"lastPushTimeStamp": "2018-12-13T17:31:40.209Z",
+			"output": {
+				"PartitionKeyName": "ID",
+				"SortKeyName": "Name",
+				"SortKeyType": "S",
+				"Region": "us-east-1",
+				"Arn": "arn:aws:dynamodb:us-east-1:261504354854:table/bctabledata",
+				"PartitionKeyType": "S",
+				"Name": "bctabledata"
+			},
+			"lastPushDirHash": "+evEBV2Gqohooon+6oFBrTW9AQE="
+		}
+	},
+	"function": {
+		"bctabledata": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": [
+				{
+					"category": "storage",
+					"resourceName": "bctabledata",
+					"attributes": [
+						"Name",
+						"Arn"
+					]
+				}
+			],
+			"lastBuildTimeStamp": "2018-12-13T17:07:13.135Z",
+			"lastPackageTimeStamp": "2018-12-13T17:07:17.721Z",
+			"distZipFilename": "bctabledata-1544720833-latest-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/britecodechallenge-20181213145247-deployment/amplify-cfn-templates/function/bctabledata-cloudformation-template.json",
+				"logicalId": "functionbctabledata"
+			},
+			"lastPushTimeStamp": "2018-12-13T17:31:40.210Z",
+			"output": {
+				"Region": "us-east-1",
+				"Arn": "arn:aws:lambda:us-east-1:261504354854:function:bctabledata",
+				"Name": "bctabledata"
+			},
+			"lastPushDirHash": "vJsqOyHPycVzJa9mfvYHUjKI7NY="
+		}
+	},
+	"api": {
+		"britecodechallenge": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "API_KEY",
+				"GraphQLAPIIdOutput": "mhej4hokbrhidinvcmfolqysxu",
+				"GraphQLAPIEndpointOutput": "https://zpidknp4i5hppfxbzsn6xwodoe.appsync-api.us-east-1.amazonaws.com/graphql",
+				"GraphQLAPIKeyOutput": "da2-nwros3ji4vbulgpoi72wp6s3wa"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/britecodechallenge-20181213145247-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apibritecodechallenge"
+			},
+			"lastPushTimeStamp": "2018-12-13T17:31:42.052Z",
+			"lastPushDirHash": "QkwJtQZn5zCKOBvtlvpb+muGaHQ="
+		}
+	}
+}

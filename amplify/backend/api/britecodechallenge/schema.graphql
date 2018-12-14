@@ -1,0 +1,7 @@
+type Payment @model {
+  id: ID!
+  name: String!
+  description: String!
+  date: String!
+  amount: Float!
+}

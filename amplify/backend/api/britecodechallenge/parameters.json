@@ -1,0 +1,7 @@
+{
+  "AppSyncApiName": "britecodechallenge",
+  "schemaGraphql": "s3://britecodechallenge-20181213145247-deployment/amplify-appsync-files/schema.graphql.1544722095809",
+  "ResolverBucket": "britecodechallenge-20181213145247-deployment",
+  "ResolverRootKey": "amplify-appsync-files",
+  "DeploymentTimestamp": "1544722095809"
+}

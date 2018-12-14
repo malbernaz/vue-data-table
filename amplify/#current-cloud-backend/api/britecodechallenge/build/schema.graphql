@@ -1,0 +1,120 @@
+type Payment {
+  id: ID!
+  name: String!
+  description: String!
+  date: String!
+  amount: Float!
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelPaymentConnection {
+  items: [Payment]
+  nextToken: String
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelPaymentFilterInput {
+  id: ModelIDFilterInput
+  name: ModelStringFilterInput
+  description: ModelStringFilterInput
+  date: ModelStringFilterInput
+  amount: ModelFloatFilterInput
+  and: [ModelPaymentFilterInput]
+  or: [ModelPaymentFilterInput]
+  not: ModelPaymentFilterInput
+}
+
+type Query {
+  getPayment(id: ID!): Payment
+  listPayments(filter: ModelPaymentFilterInput, limit: Int, nextToken: String): ModelPaymentConnection
+}
+
+input CreatePaymentInput {
+  id: ID
+  name: String!
+  description: String!
+  date: String!
+  amount: Float!
+}
+
+input UpdatePaymentInput {
+  id: ID!
+  name: String
+  description: String
+  date: String
+  amount: Float
+}
+
+input DeletePaymentInput {
+  id: ID
+}
+
+type Mutation {
+  createPayment(input: CreatePaymentInput!): Payment
+  updatePayment(input: UpdatePaymentInput!): Payment
+  deletePayment(input: DeletePaymentInput!): Payment
+}
+
+type Subscription {
+  onCreatePayment: Payment @aws_subscribe(mutations: ["createPayment"])
+  onUpdatePayment: Payment @aws_subscribe(mutations: ["updatePayment"])
+  onDeletePayment: Payment @aws_subscribe(mutations: ["deletePayment"])
+}

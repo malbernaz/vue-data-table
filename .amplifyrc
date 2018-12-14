@@ -1,0 +1,14 @@
+{
+    "providers": {
+        "awscloudformation": {
+            "AuthRoleName": "britecodechallenge-20181213145247-authRole",
+            "UnauthRoleArn": "arn:aws:iam::261504354854:role/britecodechallenge-20181213145247-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::261504354854:role/britecodechallenge-20181213145247-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "britecodechallenge-20181213145247-deployment",
+            "UnauthRoleName": "britecodechallenge-20181213145247-unauthRole",
+            "StackName": "britecodechallenge-20181213145247",
+            "StackId": "arn:aws:cloudformation:us-east-1:261504354854:stack/britecodechallenge-20181213145247/857366b0-fef7-11e8-bbcf-500c286014fd"
+        }
+    }
+}

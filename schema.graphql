@@ -1,0 +1,149 @@
+"""This directive allows results to be deferred during execution"""
+directive @defer on FIELD
+
+"""
+Tells the service which subscriptions will be published to when this mutation is
+called. This directive is deprecated use @aws_susbscribe directive instead.
+"""
+directive @aws_publish(
+  """
+  List of subscriptions which will be published to when this mutation is called.
+  """
+  subscriptions: [String]
+) on FIELD_DEFINITION
+
+"""Tells the service which mutation triggers this subscription."""
+directive @aws_subscribe(
+  """
+  List of mutations which will trigger this subscription when they are called.
+  """
+  mutations: [String]
+) on FIELD_DEFINITION
+
+"""Directs the schema to enforce authorization on a field"""
+directive @aws_auth(
+  """List of cognito user pool groups which have access on this field"""
+  cognito_groups: [String]
+) on FIELD_DEFINITION
+
+input CreatePaymentInput {
+  id: ID
+  name: String!
+  description: String!
+  date: String!
+  amount: Float!
+}
+
+input DeletePaymentInput {
+  id: ID
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+type ModelPaymentConnection {
+  items: [Payment]
+  nextToken: String
+}
+
+input ModelPaymentFilterInput {
+  id: ModelIDFilterInput
+  name: ModelStringFilterInput
+  description: ModelStringFilterInput
+  date: ModelStringFilterInput
+  amount: ModelFloatFilterInput
+  and: [ModelPaymentFilterInput]
+  or: [ModelPaymentFilterInput]
+  not: ModelPaymentFilterInput
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+type Mutation {
+  createPayment(input: CreatePaymentInput!): Payment
+  updatePayment(input: UpdatePaymentInput!): Payment
+  deletePayment(input: DeletePaymentInput!): Payment
+}
+
+type Payment {
+  id: ID!
+  name: String!
+  description: String!
+  date: String!
+  amount: Float!
+}
+
+type Query {
+  getPayment(id: ID!): Payment
+  listPayments(filter: ModelPaymentFilterInput, limit: Int, nextToken: String): ModelPaymentConnection
+}
+
+type Subscription {
+  onCreatePayment: Payment
+  onUpdatePayment: Payment
+  onDeletePayment: Payment
+}
+
+input UpdatePaymentInput {
+  id: ID!
+  name: String
+  description: String
+  date: String
+  amount: Float
+}
+

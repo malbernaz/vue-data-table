@@ -5,11 +5,11 @@
         <DataTable slot-scope="tableProps" v-bind="tableProps"/>
       </WithSearch>
     </div>
-    <Modal v-if="showModal" @close="showModal=false" :title="rows[selectedRow][1]">
+    <Modal v-if="showModal" @close="showModal=false" :title="selectedRow.name">
       <div class="modal">
         <label for="description">
           <h3>edit description:</h3>
-          <textarea id="description" v-model="rows[selectedRow][2]"/>
+          <textarea id="description" v-model="selectedRow.description"/>
         </label>
         <button @click="save">save edit</button>
       </div>
@@ -22,6 +22,8 @@ import Vue from "vue";
 import tinydate from "tinydate";
 import { DataTable, WithSearch, Def, Row } from "./DataTable";
 import Modal from "./Modal.vue";
+import client from "@/api";
+import { LIST_PAYMENTS } from "@/queries";
 
 let stamp = tinydate("{DD}/{MM}/{YYYY}");
 let currFmt = new Intl.NumberFormat("en-US", {
@@ -33,35 +35,35 @@ interface Data {
   defs: Def[];
   rows: Row[];
   showModal: boolean;
-  selectedRow: number;
+  selectedRow?: Row;
 }
 
 let defs: Def[] = [
   {
-    field: "ID",
+    field: "id",
     display: false
   },
   {
-    field: "Name",
+    field: "name",
     width: "20%"
   },
   {
-    field: "Description",
+    field: "description",
     width: "60%"
   },
   {
-    field: "Date",
+    field: "date",
     align: "right",
     width: "10%",
     transform: (data: string) => stamp(new Date(data)),
     sort: (a: string, b: string) => +new Date(a) - +new Date(b)
   },
   {
-    field: "Amount",
+    field: "amount",
     align: "right",
     width: "10%",
-    transform: (data: string) => currFmt.format(parseFloat(data)),
-    sort: (a: string, b: string) => parseFloat(a) - parseFloat(b)
+    transform: (data: number) => currFmt.format(data),
+    sort: (a: number, b: number) => a - b
   }
 ];
 
@@ -72,18 +74,22 @@ export default Vue.extend({
       defs,
       rows: [],
       showModal: false,
-      selectedRow: 0
+      selectedRow: undefined
     };
   },
   async created() {
-    let res = await fetch("/payment-data.json");
-    let [_, ...rows] = await res.json();
+    const {
+      data: {
+        // @ts-ignore
+        listPayments: { items }
+      }
+    } = await client.execute(LIST_PAYMENTS);
 
-    this.rows = rows;
+    this.rows = items;
   },
   methods: {
-    handleRowSelect(row: Row, rowIndex: number) {
-      this.selectedRow = rowIndex;
+    handleRowSelect(row: Row) {
+      this.selectedRow = row;
       this.showModal = true;
     },
     save() {

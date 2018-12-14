@@ -1,0 +1,7 @@
+{
+  "tableName": "bctabledata",
+  "partitionKeyName": "ID",
+  "partitionKeyType": "S",
+  "sortKeyName": "Name",
+  "sortKeyType": "S"
+}

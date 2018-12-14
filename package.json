@@ -6,10 +6,14 @@
     "test": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@grafoo/core": "^1.2.1",
     "tinydate": "^1.0.0",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@grafoo/babel-plugin": "^1.2.1",
+    "@grafoo/types": "^1.2.1",
     "@types/jest": "^23.1.4",
     "@vue/cli-plugin-babel": "^3.2.0",
     "@vue/cli-plugin-typescript": "^3.2.0",

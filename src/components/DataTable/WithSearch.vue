@@ -51,12 +51,7 @@ export default Vue.extend({
   },
   computed: {
     filteredRows(): Row[] {
-      return this.rows.filter(row => {
-        let def = this.defs.find(def => def.field === this.filter) as Def;
-        let col = this.defs.indexOf(def);
-
-        return new RegExp(this.search, "gim").test(row[col]);
-      });
+      return this.rows.filter(row => new RegExp(this.search, "gim").test(row[this.filter]));
     }
   }
 });

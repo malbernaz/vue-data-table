@@ -5,6 +5,8 @@
 <script lang="ts">
 import Vue from "vue";
 import Root from "./components/Root.vue";
+import { LIST_PAYMENTS } from "./queries";
+import client from "./api";
 
 export default Vue.extend({ components: { Root } });
 </script>
@@ -23,7 +25,6 @@ html {
 }
 
 body {
-  min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
     "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
